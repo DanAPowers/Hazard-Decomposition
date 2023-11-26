@@ -1,7 +1,8 @@
-# 
-# decomp.cthaz <- function(bA, bB, xA, xB, offA, offB, varbA, varbB, 
-#                          meanA, meanB, wA, wB, scale=NULL, printit) {
+# model_setup.R
+# (deal with three possible models)
 
+# piecewise-constant exponential hazard model
+#
 decomp.cthaz <- function(A, B, 
                           meanA, meanB, scale=NULL, printit) {
 
@@ -50,10 +51,9 @@ decomp(bA, bB, xA, xB, offA, offB, varbA, varbB,
        eval(F), eval(f) )
 
 }
-##################################
-# 
-# decomp.dtlogit <- function(bA, bB, xA, xB, offA, offB, varbA, varbB,
-#                          meanA, meanB, wA, wB, scale=NULL, printit) {
+
+# discrete-time logit model
+
 decomp.dtlogit <- function(A,  B,
                           meanA, meanB, scale=NULL, printit) {
 
@@ -103,12 +103,8 @@ wB    <- B$w
   
 }
 
-############# cloglog ############
-#m0stuff <- list(b0=outm0$b,x0=outm0$x, off0=outm0$off, v0=outm0$v, w0=outm0$w)
-#m1stuff <- list(b1=outm1$b,x1=outm0$x, off1=outm1$off, v1=outm1$v, w1=outm1$w)
+# discrete time with cloglog link
 
-# decomp.dtcloglog <- function(bA, xA, offA, varA, wA,  bB, xB, offB, varB, 
-#                            meanA, meanB, scale=NULL, printit) 
 decomp.dtcloglog <- function(A,  B, 
                               scale=NULL, printit) {
   

@@ -1,4 +1,4 @@
-# C.R (from B)
+# decomp_functions.R (called from model_setup.R)
 decomp <- function(bA, bB, xA, xB, offA, offB, varbA, varbB, 
                    meanA, meanB, wA, wB, printit, scale, F, f) {
   
@@ -7,20 +7,6 @@ f <- eval(f)
 
 mA <- meanA
 mB <- meanB
-
-# mA <- NULL
-# for (i in 1:ncol(xA)){
-#   mA[i] <- mean(xA[,i])
-# }
-# 
-# mB <- NULL
-# for (i in 1:ncol(xB)){
-#   mB[i] <- mean(xB[,i])
-# }
-# 
-# if (length(meanA) == ncol(xA)) mA <- meanA
-# if (length(meanB) == ncol(xB)) mB <- meanB
-# #  
 
 # Yun weight function (composition)
 Wdx.F  <- function(b,x1,x2){
@@ -103,9 +89,6 @@ C   <-  F01 - F11
 # get dEdb for variance estimator
 dWx  <- dW.F(bA, mA, mB)
 
-#varb.b1  <- varb.bA <- matrix(varbA,length(bA),length(bA))
-#varb.b2  <- varb.bB <- matrix(varbB,length(bB),length(bB))
-
 dEdb <- array(NA, c(length(bA), length(bA)))
 for (k in 1:length(bA)){
   for (l in 1:length(bA)) {
@@ -127,12 +110,12 @@ for (k in 1:length(bA)){
 ##   Variances
 #    Composition (E.k)
 K <- length(bA)
-#Var.E.k <- dEdb%*%varb.bA%*%t(dEdb)
+
 Var.E.k <- dEdb%*%varbA%*%t(dEdb)
 seWdx <- sqrt(diag(Var.E.k))
 ##  Variances
 #   Coefficients (C.k)
-#Var.C.k <- dCdbA%*%varb.bA%*%t(dCdbA) + dCdbB%*%varb.bB%*%t(dCdbB)
+
 Var.C.k <- dCdbA%*%varbA%*%t(dCdbA) + dCdbB%*%varbB%*%t(dCdbB)
 seWdb <- sqrt(diag(Var.C.k))
 
@@ -155,11 +138,10 @@ for (k in 1:length(bB)){
 }
 
 #         1 x k   k x k     k x 1
-#var.E0 <- t(dEdb.0)%*%varb.b1%*%dEdb.0
+
 var.E0 <- t(dEdb.0)%*%varbA%*%dEdb.0
 s.E0   <- sqrt(var.E0)
 
-#var.C0 <- t(dCdb.0A)%*%varb.b1%*%dCdb.0A + t(dCdb.0B)%*%varb.b2%*%dCdb.0B 
 var.C0 <- t(dCdb.0A)%*%varbA%*%dCdb.0A + t(dCdb.0B)%*%varbB%*%dCdb.0B 
 s.C0   <- sqrt(var.C0)
 
