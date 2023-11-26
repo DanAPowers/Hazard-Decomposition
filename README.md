@@ -12,10 +12,12 @@ The Example.R code contains routines for this. A typical call might consist of p
 For example: two decomposions are performed--one from each perspective--to be averaged later on.
 
 C1 <- decomp.cthaz(m1stuff, m0stuff, printit=TRUE, scale=1000)
+
 C2 <- decomp.cthaz(m0stuff, m1stuff, printit=TRUE, scale=1000)
 
 discrete-time routines are called as:
 
 Dlogit <- decomp.dtlogit(m1stuff, m0stuff, printit=TRUE, scale=100)
+
 Dcloglog <- decomp.dtcloglog(m1stuff, m0stuff, printit=TRUE, scale=100)
 
