@@ -1,6 +1,6 @@
 # Hazard-Decomposition
 Multivariate Decomposition of Group Differences in Hazard Rates
 
-Routines to decompose differences in hazard rates estimated from continuous-time and discrete-time hazard models as described by Powers and Yun (2009) MULTIVARIATE DECOMPOSITION FOR HAZARD RATE MODELS, Sociological Methodolgy 
+Routines to decompose differences in hazard rates estimated from continuous-time and discrete-time hazard models as described by Powers and Yun (2009) MULTIVARIATE DECOMPOSITION FOR HAZARD RATE MODELS, Sociological Methodolgy. 
 
 We develop a regression decomposition technique for hazard rate models, where the difference in observed rates is decomposed into components attributable to group differences in characteristics and group differences in effects. The baseline hazard is specified using a piecewise-constant exponential model, which leads to convenient estimation based on a Poisson regression model fit to person-period, or split-episode data. This specification allows for a flexible representation of the baseline hazard and provides a straightforward way to introduce time-varying covariates and time-varying effects. We provide computational details underlying the method and apply the technique to the decomposition of the Black-White difference in first premarital birth rates into components reflecting characteristics and effect contributions of several predictors, as well as the effect contribution attributable to race differences in the baseline hazard.
