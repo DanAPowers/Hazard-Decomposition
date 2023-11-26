@@ -9,7 +9,13 @@ Three models are supported: continous-time (piecewise-constant exponential), dis
 
 The Example.R code contains routines for this. A typical call might consist of performing two decompositions (one from each group's perspective) and averaging the results as a solution to the indexing problem.
 
-For example:
-# two decomposions: one from each perspective (to be averaged)
+For example: two decomposions are performed--one from each perspective--to be averaged later on.
+
 C1 <- decomp.cthaz(m1stuff, m0stuff, printit=TRUE, scale=1000)
 C2 <- decomp.cthaz(m0stuff, m1stuff, printit=TRUE, scale=1000)
+
+discrete-time routines are called as:
+
+Dlogit <- decomp.dtlogit(m1stuff, m0stuff, printit=TRUE, scale=100)
+Dcloglog <- decomp.dtcloglog(m1stuff, m0stuff, printit=TRUE, scale=100)
+
