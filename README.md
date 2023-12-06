@@ -10,20 +10,20 @@ Three models are supported: continous-time (piecewise-constant exponential), dis
         df <- read.csv(file='hazdata.csv'
         require(survey)
 
-#clusters, no weights 
+Clusters, no weights 
 
         dfsvy <- svydesign(ids=~iid, weights=~1, cluster=~famid, nest=TRUE, data=df)
 
-#no weights, no clusters 
+No weights, no clusters 
 
         dfsvy <- svydesign(ids=~iid, weights=~1, nest=TRUE, data=df)
 
-#make subsets based on the grouping variable
+Make subsets based on the grouping variable
 
         Asub <- subset(dfsvy, race == "Black")
         Bsub <- subset(dfsvy, race == "White")
 
-#source main subroutines
+source main subroutines
 
         source('hazard_decomp_functions_svy.R')
 
