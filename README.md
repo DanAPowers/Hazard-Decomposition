@@ -5,20 +5,20 @@ Routines to decompose differences in hazard rates estimated from continuous-time
 
 We develop a regression decomposition technique for hazard rate models, where the difference in observed rates is decomposed into components attributable to group differences in characteristics and group differences in effects. The baseline hazard is specified using a piecewise-constant exponential model, which leads to convenient estimation based on a Poisson regression model fit to person-period, or split-episode data. This specification allows for a flexible representation of the baseline hazard and provides a straightforward way to introduce time-varying covariates and time-varying effects. We provide computational details underlying the method and apply the technique to the decomposition of the Black-White difference in first premarital birth rates into components reflecting characteristics and effect contributions of several predictors, as well as the effect contribution attributable to race differences in the baseline hazard.
 
-Three models are supported: continous-time (piecewise-constant exponential), discrete-time logit, and discrete-time complementary log log. A user-specified formula and group design lists are passed to hazard_decomp_functions_svy.R. Although this requires data to be setup as a complex design, simple designs are also supported.
+Three models are supported: continous-time (piecewise-constant exponential), discrete-time logit, and discrete-time complementary log log. A user-specified formula and group design lists are passed to hazard_decomp_functions_svy.R. Although this requires data to be setup as a complex design, simple designs are also supported (robust std. errors will be estimated by svyglm)
 
         df <- read.csv(file='hazdata.csv'
         require(survey)
 
-clusters, no weights 
+#clusters, no weights 
 
         dfsvy <- svydesign(ids=~iid, weights=~1, cluster=~famid, nest=TRUE, data=df)
 
-no weights, no clusters 
+#no weights, no clusters 
 
         dfsvy <- svydesign(ids=~iid, weights=~1, nest=TRUE, data=df)
 
-make subsets based on the grouping variable
+#make subsets based on the grouping variable
 
         Asub <- subset(dfsvy, race == "Black")
         Bsub <- subset(dfsvy, race == "White")
