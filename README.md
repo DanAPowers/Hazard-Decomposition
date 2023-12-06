@@ -39,7 +39,7 @@ models:
         decomp.logit   (discrete-time logit)       
         decomp.cloglog (discrete-time complementary log-log)
         
-For example: two decomposions are performed and averaged (see example)
+For example: two decompositions are performed and averaged (see example)
 
         m1a <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
                 inc1000 + nosibs + magebir + offset(logexp) - 1,
