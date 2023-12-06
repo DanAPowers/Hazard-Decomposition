@@ -8,7 +8,6 @@ We develop a regression decomposition technique for hazard rate models, where th
 Three models are supported: continous-time (piecewise-constant exponential), discrete-time logit, and discrete-time complementary log log. A user-specified formula and group design lists are passed to hazard_decomp_functions_svy.R. Although this requires data to be setup as a complex design, simple designs are also supported.
 
         df <- read.csv(file='hazdata.csv'
-
         require(survey)
 
 clusters, no weights 
@@ -22,7 +21,6 @@ no weights, no clusters
 make subsets based on the grouping variable
 
         Asub <- subset(dfsvy, race == "Black")
-
         Bsub <- subset(dfsvy, race == "White")
 
 #source main subroutines
@@ -38,20 +36,18 @@ where, Asub and Bsub are the design lists for each group, scale is a rate multip
 models: 
 
         decomp.pwcexp  (continuous-time model piecewise constant exponential via poisson trick (log-exposure as offset))
-
-        decomp.logit   (discrete-time logit)
-        
+        decomp.logit   (discrete-time logit)       
         decomp.cloglog (discrete-time complementary log-log)
         
 For example: two decomposions are performed and averaged (see example)
 
-m1a <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
-                      inc1000 + nosibs + magebir + offset(logexp) - 1,
-                    Asub, Bsub, scale=1000, reverse=FALSE)
+        m1a <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
+                inc1000 + nosibs + magebir + offset(logexp) - 1,
+                Asub, Bsub, scale=1000, reverse=FALSE)
                     
-m1b <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
-                       inc1000 + nosibs + magebir + offset(logexp) - 1,
-                     Asub, Bsub, scale=1000, reverse=TRUE)
+        m1b <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
+                inc1000 + nosibs + magebir + offset(logexp) - 1,
+                Asub, Bsub, scale=1000, reverse=TRUE)
 
 
 
