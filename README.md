@@ -5,19 +5,48 @@ Routines to decompose differences in hazard rates estimated from continuous-time
 
 We develop a regression decomposition technique for hazard rate models, where the difference in observed rates is decomposed into components attributable to group differences in characteristics and group differences in effects. The baseline hazard is specified using a piecewise-constant exponential model, which leads to convenient estimation based on a Poisson regression model fit to person-period, or split-episode data. This specification allows for a flexible representation of the baseline hazard and provides a straightforward way to introduce time-varying covariates and time-varying effects. We provide computational details underlying the method and apply the technique to the decomposition of the Black-White difference in first premarital birth rates into components reflecting characteristics and effect contributions of several predictors, as well as the effect contribution attributable to race differences in the baseline hazard.
 
-Three models are supported: continous-time (piecewise-constant exponential), discrete-time logit, and discrete-time complementary log log. A user-specified formula and group definition (as well as cluster variable if applicable) are passed to glm, components of the glm objects are processed into lists passed to model_setup.R, whose reults are passed to decomp_functions.R.
+Three models are supported: continous-time (piecewise-constant exponential), discrete-time logit, and discrete-time complementary log log. A user-specified formula and group design lists are passed to hazard_decomp_functions_svy.R. Although this requires data to be setup as a complex design, simple designs are also supported.
 
-The Example.R code contains routines for this. A typical call might consist of performing two decompositions (one from each group's perspective) and averaging the results as a solution to the indexing problem.
+df <- read.csv(file='hazdata.csv'
 
-For example: two decomposions are performed--one from each perspective--to be averaged later on.
+##libraries
+require(survey)
+#id required: subject specific id to identify the subject in a split-epsidode data structure
+##clusters, no weights 
+dfsvy <- svydesign(ids=~iid, weights=~1, cluster=~famid, nest=TRUE, data=df)
+#n#o weights, no clusters 
+dfsvy <- svydesign(ids=~iid, weights=~1, nest=TRUE, data=df)
+##OK (ignore warning)
+dfsvy <- svydesign(ids=~iid, data=df)
+##make subsets based on the grouping variable
+##check on values of grouping variable
+table(df$race) #OK
+##define subsets here
+Asub <- subset(dfsvy, race == "Black")
+Bsub <- subset(dfsvy, race == "White")
+#source main subroutines
+source('hazard_decomp_functions_svy.R')
+#rate decomposition
 
-C1 <- decomp.cthaz(m1stuff, m0stuff, printit=TRUE, scale=1000)
+Hazdecomp_Example.R shows typical calls (and default values)
 
-C2 <- decomp.cthaz(m0stuff, m1stuff, printit=TRUE, scale=1000)
+call: decomp_model(formula, Asub, Bsub, scale=1, reverse=FALSE, prinitit=FALSE)
 
-discrete-time routines are called as:
+where, Asub and Bsub are the design lists for each group, scale is a rate multiplier, reverse=TRUE if groups are swapped, printit to print output.
 
-Dlogit <- decomp.dtlogit(m1stuff, m0stuff, printit=TRUE, scale=100)
+models: decomp.pwcexp  (continuous-time model piecewise constant exponential via poisson trick (log-exposure as offset))
+        decomp.logit   (discrete-time logit)
+        decomp.cloglog (discrete-time complementary log-log)
+        
+For example: two decomposions are performo be averaged
 
-Dcloglog <- decomp.dtcloglog(m1stuff, m0stuff, printit=TRUE, scale=100)
+m1a <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
+                      inc1000 + nosibs + magebir + offset(logexp) - 1,
+                    Asub, Bsub, scale=1000, reverse=FALSE)
+m1b <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
+                       inc1000 + nosibs + magebir + offset(logexp) - 1,
+                     Asub, Bsub, scale=1000, reverse=TRUE)
+
+
+
 
