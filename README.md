@@ -35,13 +35,15 @@ call: decomp_model(formula, Asub, Bsub, scale=1, reverse=FALSE, prinitit=FALSE)
 
 where, Asub and Bsub are the design lists for each group, scale is a rate multiplier, reverse=TRUE if groups are swapped, printit to print output.
 
-models: decomp.pwcexp  (continuous-time model piecewise constant exponential via poisson trick (log-exposure as offset))
+models: 
+
+        decomp.pwcexp  (continuous-time model piecewise constant exponential via poisson trick (log-exposure as offset))
 
         decomp.logit   (discrete-time logit)
         
         decomp.cloglog (discrete-time complementary log-log)
         
-For example: two decomposions are performo be averaged
+For example: two decomposions are performed and averaged (see example)
 
 m1a <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
                       inc1000 + nosibs + magebir + offset(logexp) - 1,
