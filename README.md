@@ -1,4 +1,4 @@
-### Hazard-Decomposition
+### Hazard-Rate-Decomposition
 Multivariate Decomposition of Group Differences in Hazard Rates
 
 Routines to decompose differences in hazard rates estimated from continuous-time and discrete-time hazard models as described by D Powers and M-S Yun (2009) MULTIVARIATE DECOMPOSITION FOR HAZARD RATE MODELS, Sociological Methodolgy. 
