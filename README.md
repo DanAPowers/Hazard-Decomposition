@@ -10,22 +10,39 @@ Three models are supported: continous-time (piecewise-constant exponential), dis
 df <- read.csv(file='hazdata.csv'
 
 ##libraries
+
 require(survey)
+
 #id required: subject specific id to identify the subject in a split-epsidode data structure
+
 ##clusters, no weights 
+
 dfsvy <- svydesign(ids=~iid, weights=~1, cluster=~famid, nest=TRUE, data=df)
+
 #n#o weights, no clusters 
+
 dfsvy <- svydesign(ids=~iid, weights=~1, nest=TRUE, data=df)
+
 ##OK (ignore warning)
+
 dfsvy <- svydesign(ids=~iid, data=df)
+
 ##make subsets based on the grouping variable
+
 ##check on values of grouping variable
+
 table(df$race) #OK
+
 ##define subsets here
+
 Asub <- subset(dfsvy, race == "Black")
+
 Bsub <- subset(dfsvy, race == "White")
+
 #source main subroutines
+
 source('hazard_decomp_functions_svy.R')
+
 #rate decomposition
 
 Hazdecomp_Example.R shows typical calls (and default values)
@@ -35,7 +52,9 @@ call: decomp_model(formula, Asub, Bsub, scale=1, reverse=FALSE, prinitit=FALSE)
 where, Asub and Bsub are the design lists for each group, scale is a rate multiplier, reverse=TRUE if groups are swapped, printit to print output.
 
 models: decomp.pwcexp  (continuous-time model piecewise constant exponential via poisson trick (log-exposure as offset))
+
         decomp.logit   (discrete-time logit)
+        
         decomp.cloglog (discrete-time complementary log-log)
         
 For example: two decomposions are performo be averaged
@@ -43,6 +62,7 @@ For example: two decomposions are performo be averaged
 m1a <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
                       inc1000 + nosibs + magebir + offset(logexp) - 1,
                     Asub, Bsub, scale=1000, reverse=FALSE)
+                    
 m1b <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
                        inc1000 + nosibs + magebir + offset(logexp) - 1,
                      Asub, Bsub, scale=1000, reverse=TRUE)
