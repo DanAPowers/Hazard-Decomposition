@@ -1,6 +1,6 @@
 # HazdecompExample.R 
 rm(list=ls())
-setwd("/Users/dpowers/Documents/R_progs/hazardratedecomp")
+setwd("////")
 
 require(tidyverse)
 require(survey)
