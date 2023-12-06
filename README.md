@@ -7,31 +7,31 @@ We develop a regression decomposition technique for hazard rate models, where th
 
 Three models are supported: continous-time (piecewise-constant exponential), discrete-time logit, and discrete-time complementary log log. A user-specified formula and group design lists are passed to hazard_decomp_functions_svy.R. Although this requires data to be setup as a complex design, simple designs are also supported.
 
-df <- read.csv(file='hazdata.csv'
+        df <- read.csv(file='hazdata.csv'
 
-require(survey)
+        require(survey)
 
 clusters, no weights 
 
-dfsvy <- svydesign(ids=~iid, weights=~1, cluster=~famid, nest=TRUE, data=df)
+        dfsvy <- svydesign(ids=~iid, weights=~1, cluster=~famid, nest=TRUE, data=df)
 
 no weights, no clusters 
 
-dfsvy <- svydesign(ids=~iid, weights=~1, nest=TRUE, data=df)
+        dfsvy <- svydesign(ids=~iid, weights=~1, nest=TRUE, data=df)
 
 make subsets based on the grouping variable
 
-Asub <- subset(dfsvy, race == "Black")
+        Asub <- subset(dfsvy, race == "Black")
 
-Bsub <- subset(dfsvy, race == "White")
+        Bsub <- subset(dfsvy, race == "White")
 
 #source main subroutines
 
-source('hazard_decomp_functions_svy.R')
+        source('hazard_decomp_functions_svy.R')
 
 Hazdecomp_Example.R shows typical calls (and default values)
 
-call: decomp_model(formula, Asub, Bsub, scale=1, reverse=FALSE, prinitit=FALSE)
+        call: decomp_model(formula, Asub, Bsub, scale=1, reverse=FALSE, prinitit=FALSE)
 
 where, Asub and Bsub are the design lists for each group, scale is a rate multiplier, reverse=TRUE if groups are swapped, printit to print output.
 
