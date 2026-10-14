@@ -70,7 +70,7 @@ m2 <- decomp.dtlogit(devnt ~ age + pctsmom + nfamtran + medu +
                        inc1000 + nosibs + magebir  - 1,
                      Asub, Bsub, scale=100, printit=TRUE)
 
-m2 <- decomp.dtcloglog(devnt ~ age + pctsmom + nfamtran + medu + 
+m3 <- decomp.dtcloglog(devnt ~ age + pctsmom + nfamtran + medu + 
                          inc1000 + nosibs + magebir  - 1,
                        Asub, Bsub, scale=100, printit=TRUE)
 
@@ -84,6 +84,40 @@ m1a <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu +
 m1b <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
                        inc1000 + nosibs + magebir + offset(logexp) - 1,
                      Asub, Bsub, scale=1000, reverse=TRUE)
+
+
+# source all below here
+
+ave.decompE <- function(D1, D2, scale) {
+  s  <- scale
+  vn <- D1$vnames
+  b1 <- D1$coefE
+  b2 <- D2$coefE
+  v1 <- D1$vcovE
+  v2 <- D2$vcovE
+  b <- s * (b1 - b2)/2
+  v <-     (v1 + v2)/4
+  se.b <- sqrt(diag(v)) * s
+  return(data.frame(term=vn, b=b, se=se.b, z=b/se.b, 
+                    b.lower = b-1.96*se.b,
+                    b.upper = b+1.96*se.b))
+}
+
+ave.decompC <- function(D1, D2, scale) {
+  s  <- scale
+  vn <- D1$vnames
+  b1 <- D1$coefC
+  b2 <- D2$coefC
+  v1 <- D1$vcovC
+  v2 <- D2$vcovC
+  b <- s * (b1 - b2)/2
+  v <- s^2 * (v1 + v2)/4
+  se.b <- sqrt(diag(v))
+  return(data.frame(term = vn, b=b, se=se.b, z=b/se.b, 
+                    b.lower = b-1.96*se.b,
+                    b.upper = b+1.96*se.b))
+}
+
 
 E.ave <- ave.decompE(m1a, m1b, scale=1000)
 C.ave <- ave.decompC(m1a, m1b, scale=1000)
@@ -126,38 +160,3 @@ pC <- ggplot(C.ave, aes(b, term)) +
   ) 
 
 gridExtra::grid.arrange(pE,pC, nrow=1, ncol=2)
-
-
-# source all below here
-
-ave.decompE <- function(D1, D2, scale) {
-  s  <- scale
-  vn <- D1$vnames
-  b1 <- D1$bE
-  b2 <- D2$bE
-  v1 <- D1$varbE
-  v2 <- D2$varbE
-  b <- s * (b1 - b2)/2
-  v <-     (v1 + v2)/4
-  se.b <- sqrt(diag(v)) * s
-  return(data.frame(term=vn, b=b, se=se.b, z=b/se.b, 
-                    b.lower = b-1.96*se.b,
-                    b.upper = b+1.96*se.b))
-}
-
-ave.decompC <- function(D1, D2, scale) {
-  s  <- scale
-  vn <- D1$vnames
-  b1 <- D1$bC
-  b2 <- D2$bC
-  v1 <- D1$varbC
-  v2 <- D2$varbC
-  b <- s * (b1 - b2)/2
-  v <- s^2 * (v1 + v2)/4
-  se.b <- sqrt(diag(v))
-  return(data.frame(term = vn, b=b, se=se.b, z=b/se.b, 
-                    b.lower = b-1.96*se.b,
-                    b.upper = b+1.96*se.b))
-}
-
-
