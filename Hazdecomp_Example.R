@@ -1,6 +1,6 @@
-# HazdecompExample.R 
+# Hazdecomp_Example.R 
 
-setwd("/Users/dpowers/Documents/R_progs/hazardratedecomp")
+
 
 # clear all
 rm(list=ls())
@@ -60,14 +60,13 @@ Bsub <- subset(dfsvy, race == "White")
 #
 # source main subroutines
 source('hazard_decomp_functions_svy.R')
-source("~/Documents/R_progs/mvdecomp/summary.decomp.R")
 # rate decomposition
 #
 # test calls
 m1 <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
                       inc1000 + nosibs + magebir + offset(logexp) - 1,
                     Asub, Bsub, scale=1000, printit=TRUE)
-print(summary.decomp(m1),digits=2)
+
 m2 <- decomp.dtlogit(devnt ~ age + pctsmom + nfamtran + medu + 
                        inc1000 + nosibs + magebir  - 1,
                     Asub, Bsub, scale=100, printit=TRUE)
@@ -76,10 +75,12 @@ m3 <- decomp.dtcloglog(devnt ~ age + pctsmom + nfamtran + medu +
                       inc1000 + nosibs + magebir  - 1,
                     Asub, Bsub, scale=100, printit=TRUE)
 
+# print
 
+print(summary.decomp(m1),digits=2)
 
-require(tidyverse)
 # average two decompositions: A-B (normal) and B-A (reversed)
+
 m1a <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
                       inc1000 + nosibs + magebir + offset(logexp) - 1,
                     Asub, Bsub, scale=1000, reverse=FALSE)
@@ -91,8 +92,8 @@ E.ave <- ave.decomp(m1a, m1b, scale=1000, component = "E")
 C.ave <- ave.decomp(m1a, m1b, scale=1000, component = "C")
 
 # simple tables
-E.ave[, -c(1)]
-C.ave[, -c(1)]
+E.ave %>% kableExtra::kbl(digits = 2)
+C.ave %>% kableExtra::kbl(digits = 2)
 
 # coef plots
 pE <- ggplot(E.ave, aes(b, term)) +
