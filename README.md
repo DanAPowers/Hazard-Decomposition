@@ -49,6 +49,13 @@ For example: two decompositions are performed and averaged (see example)
                 inc1000 + nosibs + magebir + offset(logexp) - 1,
                 Asub, Bsub, scale=1000, reverse=TRUE)
 
+Averaging:
 
+E.ave <- ave.decomp(m1a, m1b, scale=1000, component = "E")
+C.ave <- ave.decomp(m1a, m1b, scale=1000, component = "C")
+
+
+E.ave[, -c(1)]
+C.ave[, -c(1)]
 
 
