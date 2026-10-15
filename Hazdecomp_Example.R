@@ -1,7 +1,10 @@
 # HazdecompExample.R 
-rm(list=ls())
-setwd("////")
 
+setwd("/Users/dpowers/Documents/R_progs/hazardratedecomp")
+
+# clear all
+rm(list=ls())
+# libraries
 require(tidyverse)
 require(survey)
 
@@ -40,8 +43,6 @@ require(survey)
 df <- read.csv(file='hazdata.csv')
 
 
-# libraries
-require(survey)
 
 # set survey design: required regardless of actual design: 
 # clusters, no weights
@@ -59,25 +60,26 @@ Bsub <- subset(dfsvy, race == "White")
 #
 # source main subroutines
 source('hazard_decomp_functions_svy.R')
+source("~/Documents/R_progs/mvdecomp/summary.decomp.R")
 # rate decomposition
 #
 # test calls
 m1 <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
                       inc1000 + nosibs + magebir + offset(logexp) - 1,
                     Asub, Bsub, scale=1000, printit=TRUE)
-
+print(summary.decomp(m1),digits=2)
 m2 <- decomp.dtlogit(devnt ~ age + pctsmom + nfamtran + medu + 
                        inc1000 + nosibs + magebir  - 1,
-                     Asub, Bsub, scale=100, printit=TRUE)
+                    Asub, Bsub, scale=100, printit=TRUE)
 
-m2 <- decomp.dtcloglog(devnt ~ age + pctsmom + nfamtran + medu + 
-                         inc1000 + nosibs + magebir  - 1,
-                       Asub, Bsub, scale=100, printit=TRUE)
+m3 <- decomp.dtcloglog(devnt ~ age + pctsmom + nfamtran + medu + 
+                      inc1000 + nosibs + magebir  - 1,
+                    Asub, Bsub, scale=100, printit=TRUE)
 
 
 
 require(tidyverse)
-# average two decompositions: A-B and B-A (reversed)
+# average two decompositions: A-B (normal) and B-A (reversed)
 m1a <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu + 
                       inc1000 + nosibs + magebir + offset(logexp) - 1,
                     Asub, Bsub, scale=1000, reverse=FALSE)
@@ -85,8 +87,8 @@ m1b <- decomp.pwcexp(devnt ~ age + pctsmom + nfamtran + medu +
                        inc1000 + nosibs + magebir + offset(logexp) - 1,
                      Asub, Bsub, scale=1000, reverse=TRUE)
 
-E.ave <- ave.decompE(m1a, m1b, scale=1000)
-C.ave <- ave.decompC(m1a, m1b, scale=1000)
+E.ave <- ave.decomp(m1a, m1b, scale=1000, component = "E")
+C.ave <- ave.decomp(m1a, m1b, scale=1000, component = "C")
 
 # simple tables
 E.ave[, -c(1)]
@@ -95,9 +97,9 @@ C.ave[, -c(1)]
 # coef plots
 pE <- ggplot(E.ave, aes(b, term)) +
   geom_point(color="seagreen") +
-  geom_errorbarh(aes(xmin=b.lower, xmax=b.upper), 
+  geom_errorbar(aes(xmin=b.lower, xmax=b.upper), 
                  linewidth=.3,
-                 height=.3,
+                 width=.3,
                  linetype=1,
                  color="turquoise4") +
   # add in a dotted line at zero
@@ -111,12 +113,12 @@ pE <- ggplot(E.ave, aes(b, term)) +
 
 pC <- ggplot(C.ave, aes(b, term)) +
   geom_point(color="seagreen") +
-  geom_errorbarh(aes(xmin=b.lower, xmax=b.upper), 
-                 linewidth=.3,
-                 height=.3,
+  geom_errorbar(aes(xmin=b.lower, xmax=b.upper), 
+                 linewidth=.3, 
+                 width=.3,
                  linetype=1,
                  color="turquoise4") +
-  # add in a dotted line at zero
+  # add in a otted line at zero
   geom_vline(xintercept = 0, lty = 2, color="green") +
   theme_gray() +
   labs(
@@ -127,37 +129,5 @@ pC <- ggplot(C.ave, aes(b, term)) +
 
 gridExtra::grid.arrange(pE,pC, nrow=1, ncol=2)
 
-
-# source all below here
-
-ave.decompE <- function(D1, D2, scale) {
-  s  <- scale
-  vn <- D1$vnames
-  b1 <- D1$bE
-  b2 <- D2$bE
-  v1 <- D1$varbE
-  v2 <- D2$varbE
-  b <- s * (b1 - b2)/2
-  v <-     (v1 + v2)/4
-  se.b <- sqrt(diag(v)) * s
-  return(data.frame(term=vn, b=b, se=se.b, z=b/se.b, 
-                    b.lower = b-1.96*se.b,
-                    b.upper = b+1.96*se.b))
-}
-
-ave.decompC <- function(D1, D2, scale) {
-  s  <- scale
-  vn <- D1$vnames
-  b1 <- D1$bC
-  b2 <- D2$bC
-  v1 <- D1$varbC
-  v2 <- D2$varbC
-  b <- s * (b1 - b2)/2
-  v <- s^2 * (v1 + v2)/4
-  se.b <- sqrt(diag(v))
-  return(data.frame(term = vn, b=b, se=se.b, z=b/se.b, 
-                    b.lower = b-1.96*se.b,
-                    b.upper = b+1.96*se.b))
-}
 
 
