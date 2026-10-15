@@ -1,5 +1,6 @@
 ############################################################################
 # Author: Dan Powers (11/22/23)
+#       (updated 10/15/26)
 # functions for multivariate rate decomposition
 # of difference in hazard rates---E[r(XB)]--between group a and group b: 
 #
@@ -619,6 +620,65 @@ tabFun <- function(df1, df2) {
   return(list(dfEc, dfCc))
 }
 
+# function to summarize output from decomp object
 
-
+summary.decomp <- function (object,...) 
+  
+{
+  s  <- object$scale
+  cnE <- paste0(rownames(object$coefE))
+  cnC <- paste0(rownames(object$coefC))
+  coefE <- object$coefE  * s
+  coefC <- object$coefC  * s
+  coefEtot <- object$E * s
+  coefCtot <- object$C * s
+  covmatE <- object$vcovE
+  covmatC <- object$vcovC
+  var.cfE <- diag(covmatE)
+  var.cfC <- diag(covmatC)
+  s.errE  <- sqrt(var.cfE) * s
+  s.errC  <- sqrt(var.cfC) * s
+  s.errEtot <- sqrt(object$varE) * s
+  s.errCtot <- sqrt(object$varC) * s
+  tvalueE <- coefE/s.errE 
+  tvalueC <- coefC/s.errC 
+  tvalueEtot <- coefEtot/s.errEtot
+  tvalueCtot <- coefCtot/s.errCtot
+  dn      <- c("Estimate", "Std. Error")
+  pvalueE <- 2 * pnorm(-abs(tvalueE))
+  pvalueC <- 2 * pnorm(-abs(tvalueC))
+  pvalueEtot <- 2 * pnorm(-abs(tvalueEtot))
+  pvalueCtot <- 2 * pnorm(-abs(tvalueCtot))
+  total <- sum(coefE) + sum(coefC)
+  pctE  <- coefE/total * 100
+  pctC  <- coefC/total * 100
+  pctEtot  <- coefEtot/total * 100
+  pctCtot  <- coefCtot/total * 100
+  coeftot  <- rbind(coefEtot, coefCtot, total)
+  s.errtot <- rbind(s.errEtot, s.errCtot, s.errEtot + s.errCtot)
+  tvaluetot <- rbind(tvalueEtot, tvalueCtot, 
+                     total/(s.errEtot + s.errCtot))
+  pvaluetot <- rbind(pvalueEtot, pvalueCtot, 
+                     2 * pnorm(-abs(total/(s.errEtot + s.errCtot))))
+  pcttot    <- rbind(pctEtot, pctCtot, pctEtot+pctCtot)
+  rownames(coeftot) <- c("E", "C", "E + C")
+  cnTot     <- paste0(rownames(coeftot))
+  coef.tableE <- cbind(coefE, s.errE, tvalueE, pvalueE, pctE)
+  dimnames(coef.tableE) <- list(cnE, c(dn, "z value", "Pr(>|z|)", "pct"))
+  coef.tableC <- cbind(coefC, s.errC, tvalueC, pvalueC, pctC)
+  dimnames(coef.tableC) <- list(cnC, c(dn, "z value", "Pr(>|z|)", "pct"))
+  coef.tabletot <- cbind(coeftot, s.errtot, tvaluetot, pvaluetot, pcttot)
+  dimnames(coef.tabletot) <- list(cnTot, c(dn, "z value", "Pr(>|z|)", "pct"))
+  keep <- match(c("call", "terms"), names(object), 0L)
+  # ans <- c(object[keep], list(coefE=coefE, coefC=coefC,
+  #                          summaryE=coef.tableE,   
+  #                          summaryC=coef.tableC, 
+  #       covmatE=covmatE, covmatC=covmatC ))
+  ans <- c(object[keep], list(summaryE=coef.tableE,   
+                              summaryC=coef.tableC, 
+                              summaryTotal = coef.tabletot))
+  class(ans) <- "summary.decomp"
+  #  return(as.data.frame(rbind(coef.tableE, coef.tableC)))
+  return(ans)
+}
 
